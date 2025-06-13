@@ -1,5 +1,6 @@
 # Deploy Netflix Clone on Cloud using Jenkins - DevSecOps Project!
 https://github.com/TusharGadhave/Zomato-Clone-DevSecOps-/blob/main/zomato.png
+![Architecture Diagram](https://github.com/TusharGadhave/Zomato-Clone-DevSecOps-/blob/main/zomato.png)
 
 
 ## Prerequisites
