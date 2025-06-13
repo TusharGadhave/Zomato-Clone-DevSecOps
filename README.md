@@ -1,6 +1,6 @@
 
 # Deploy Zomato Clone on Cloud using Jenkins - DevSecOps Project!
-![Architecture Diagram](https://github.com/TusharGadhave/Zomato-Clone-DevSecOps-/blob/main/zomato.png)
+![Architecture Diagram](https://github.com/TusharGadhave/Zomato-Clone-DevSecOps/blob/main/zomato.png)
 
 ### **Phase 1: Initial Setup and Deployment**
 
@@ -15,7 +15,7 @@
 - Clone your application's code repository onto the EC2 instance:
     
     ```bash
-    git clone https://github.com/TusharGadhave/Zomato-Clone-DevSecOps-.git
+    git clone https://github.com/TusharGadhave/Zomato-Clone-DevSecOps.git
     ```
     
 
@@ -167,7 +167,7 @@ pipeline {
         }
         stage('Checkout from Git') {
             steps {
-                git branch: 'main', url: 'https://github.com/TusharGadhave/Zomato-Clone-DevSecOps-.git'
+                git branch: 'main', url: 'https://github.com/TusharGadhave/Zomato-Clone-DevSecOps.git'
             }
         }
         stage("Sonarqube Analysis") {
@@ -257,7 +257,7 @@ pipeline {
         }
         stage('Checkout from Git') {
             steps {
-                git branch: 'main', url: 'https://github.com/TusharGadhave/Zomato-Clone-DevSecOps-.git'
+                git branch: 'main', url: 'https://github.com/TusharGadhave/Zomato-Clone-DevSecOps.git'
             }
         }
         stage('Sonarqube Analysis') {
