@@ -1,20 +1,6 @@
-<div align="center">
-  <img src="./public/assets/DevSecOps.png" alt="Logo" width="100%" height="100%">
 
-  <br>
-  <a href="http://netflix-clone-with-tmdb-using-react-mui.vercel.app/">
-    <img src="./public/assets/netflix-logo.png" alt="Logo" width="100" height="32">
-  </a>
-</div>
-
-<br />
-
-<div align="center">
-  <img src="./public/assets/deadpool.png" alt="Logo" width="100%" height="100%">
-  <p align="center">Home Page</p>
-</div>
-
-# Deploy Netflix Clone on Cloud using Jenkins - DevSecOps Project!
+# Deploy Zomato Clone on Cloud using Jenkins - DevSecOps Project!
+![Architecture Diagram](https://github.com/TusharGadhave/Zomato-Clone-DevSecOps-/blob/main/zomato.png)
 
 ### **Phase 1: Initial Setup and Deployment**
 
@@ -29,7 +15,7 @@
 - Clone your application's code repository onto the EC2 instance:
     
     ```bash
-    git clone https://github.com/bhaveshjadhav/CloudDevSecOps-NetflixClone.git
+    git clone https://github.com/TusharGadhave/Zomato-Clone-DevSecOps-.git
     ```
     
 
@@ -49,30 +35,16 @@
 - Build and run your application using Docker containers:
     
     ```bash
-    docker build -t netflix .
-    docker run -d --name netflix -p 8081:80 netflix:latest
+    docker build -t zomato .
+    docker run -d --name zomato -p 3000:3000 tushardocker2113/zomato:latest
     
     #to delete
     docker stop <containerid>
-    docker rmi -f netflix
+    docker rmi -f zomato
     ```
 
-It will show an error cause you need API key
 
-**Step 4: Get the API Key:**
 
-- Open a web browser and navigate to TMDB (The Movie Database) website.
-- Click on "Login" and create an account.
-- Once logged in, go to your profile and select "Settings."
-- Click on "API" from the left-side panel.
-- Create a new API key by clicking "Create" and accepting the terms and conditions.
-- Provide the required basic details and click "Submit."
-- You will receive your TMDB API key.
-
-Now recreate the Docker image with your api key:
-```
-docker build --build-arg TMDB_V3_API_KEY=<your-api-key> -t netflix .
-```
 
 **Phase 2: Security**
 
@@ -150,7 +122,6 @@ Install below plugins
 
 3 NodeJs Plugin (Install Without restart)
 
-4 Email Extension Plugin
 
 ### **Configure Java and Nodejs in Global Tool Configuration**
 
@@ -183,10 +154,10 @@ pipeline {
     agent any
     tools {
         jdk 'jdk17'
-        nodejs 'node16'
+        nodejs 'node23'
     }
     environment {
-        SCANNER_HOME = tool 'sonar-scanner'
+        SCANNER_HOME = tool 'sonar'
     }
     stages {
         stage('clean workspace') {
@@ -196,14 +167,14 @@ pipeline {
         }
         stage('Checkout from Git') {
             steps {
-                git branch: 'main', url: 'https://github.com/bhaveshjadhav/CloudDevSecOps-NetflixClone.git'
+                git branch: 'main', url: 'https://github.com/TusharGadhave/Zomato-Clone-DevSecOps-.git'
             }
         }
         stage("Sonarqube Analysis") {
             steps {
-                withSonarQubeEnv('sonar-server') {
-                    sh '''$SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Netflix \
-                    -Dsonar.projectKey=Netflix'''
+                withSonarQubeEnv('sonar') {
+                    sh '''$SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=zomato \
+                    -Dsonar.projectKey=zomato'''
                 }
             }
         }
@@ -273,10 +244,10 @@ pipeline {
     agent any
     tools {
         jdk 'jdk17'
-        nodejs 'node16'
+        nodejs 'node23'
     }
     environment {
-        SCANNER_HOME = tool 'sonar-scanner'
+        SCANNER_HOME = tool 'sonar'
     }
     stages {
         stage('clean workspace') {
@@ -286,14 +257,14 @@ pipeline {
         }
         stage('Checkout from Git') {
             steps {
-                git branch: 'main', url: 'https://github.com/N4si/DevSecOps-Project.git'
+                git branch: 'main', url: 'https://github.com/TusharGadhave/Zomato-Clone-DevSecOps-.git'
             }
         }
         stage('Sonarqube Analysis') {
             steps {
-                withSonarQubeEnv('sonar-server') {
-                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Netflix \
-                    -Dsonar.projectKey=Netflix '''
+                withSonarQubeEnv('sonar') {
+                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=zomato \
+                    -Dsonar.projectKey=zomato '''
                 }
             }
         }
@@ -317,42 +288,30 @@ pipeline {
         }
         stage('TRIVY FS SCAN') {
             steps {
-                sh 'trivy fs . > trivyfs.txt'
+                sh 'trivy fs --format table -o trivy-fs-report.html'
             }
         }
         stage('Docker Build & Push') {
             steps {
-                script {
-                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {   
-                        sh 'docker build --build-arg TMDB_V3_API_KEY=7eb72b2eda9c0d28c5f4b8df0c7bee43 -t netflix .'
-                        sh 'docker tag netflix bhavesh053/netflix:latest'
-                        sh 'docker push bhavesh053/netflix:latest'
-                    }
-                }
+                 withCredentials([usernamePassword("credentialsId":"dockerHub", passwordVariable:"dockerHubPass" , usernameVariable:"dockerHubUser")]){
+                    sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPass}"
+                    sh "docker image tag zomato tushardocker2113/zomato:latest"
+                    sh "docker push tushardocker2113/zomato:latest"
+
             }
         }
         stage('TRIVY') {
             steps {
-                sh 'trivy image bhavesh053/netflix:latest > trivyimage.txt'
+                sh 'trivy image tushardocker2113/zomato:latest > trivyimage.txt'
             }
         }
         stage('Deploy to container') {
             steps {
-                sh 'docker run -d --name netflix -p 8081:80 bhavesh053/netflix:latest'
+                sh 'docker run -d --name zomato -p 3000:3000 tushardocker2113/zomato:latest'
             }
         }
     }
-    post {
-        always {
-            emailext attachLog: true,
-                subject: "${currentBuild.result}",
-                body: """Project: ${env.JOB_NAME}<br/>
-                         Build Number: ${env.BUILD_NUMBER}<br/>
-                         URL: ${env.BUILD_URL}<br/>""",
-                to: 'bhaveshjadhav050@gmail.com',
-                attachmentsPattern: 'trivyfs.txt,trivyimage.txt'
-        }
-    }
+   
 }
 
 
@@ -732,28 +691,6 @@ Update your Prometheus configuration (prometheus.yml) to add a new job for scrap
 Replace 'your-job-name' with a descriptive name for your job. The static_configs section specifies the targets to scrape metrics from, and in this case, it's set to nodeip:9001.
 
 Don't forget to reload or restart Prometheus to apply these changes to your configuration.
-
-To deploy an application with ArgoCD, you can follow these steps, which I'll outline in Markdown format:
-
-### Deploy Application with ArgoCD
-
-1. **Install ArgoCD:**
-
-   You can install ArgoCD on your Kubernetes cluster by following the instructions provided in the [EKS Workshop](https://archive.eksworkshop.com/intermediate/290_argocd/install/) documentation.
-
-2. **Set Your GitHub Repository as a Source:**
-
-   After installing ArgoCD, you need to set up your GitHub repository as a source for your application deployment. This typically involves configuring the connection to your repository and defining the source for your ArgoCD application. The specific steps will depend on your setup and requirements.
-
-3. **Create an ArgoCD Application:**
-   - `name`: Set the name for your application.
-   - `destination`: Define the destination where your application should be deployed.
-   - `project`: Specify the project the application belongs to.
-   - `source`: Set the source of your application, including the GitHub repository URL, revision, and the path to the application within the repository.
-   - `syncPolicy`: Configure the sync policy, including automatic syncing, pruning, and self-healing.
-
-4. **Access your Application**
-   - To Access the app make sure port 30007 is open in your security group and then open a new tab paste your NodeIP:30007, your app should be running.
 
 **Phase 7: Cleanup**
 
