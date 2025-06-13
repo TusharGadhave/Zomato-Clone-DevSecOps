@@ -1,6 +1,5 @@
-# Zomato Clone DevSecOps
-This project demonstrates how to deploy a Reddit clone app on Kubernetes with Ingress and expose it to the world using Minikube as the cluster.
-Below is an overview of the architecture of this Reddit Clone App running on Kubernetes with Ingress.
+# Deploy Netflix Clone on Cloud using Jenkins - DevSecOps Project!
+https://github.com/TusharGadhave/Zomato-Clone-DevSecOps-/blob/main/zomato.png
 
 
 ## Prerequisites
